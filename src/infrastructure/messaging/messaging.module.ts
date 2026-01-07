@@ -2,7 +2,8 @@ import { Module } from "@nestjs/common";
 
 import type { Settings } from "@/config/settings";
 import { SNSPublisher, type EventPublisher } from "@/infrastructure/messaging/publisher/index";
-import { SETTINGS_TOKEN, EVENT_PUBLISHER_TOKEN } from "@/infrastructure/di/tokens";
+import { SETTINGS_TOKEN } from "@/config/settings.module";
+import { EVENT_PUBLISHER_TOKEN } from "@/infrastructure/di/tokens";
 
 /**
  * Messaging module providing event publisher.
@@ -24,4 +25,3 @@ import { SETTINGS_TOKEN, EVENT_PUBLISHER_TOKEN } from "@/infrastructure/di/token
   exports: [EVENT_PUBLISHER_TOKEN],
 })
 export class MessagingModule {}
-

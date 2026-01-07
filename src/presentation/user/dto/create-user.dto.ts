@@ -1,24 +1,23 @@
-import { IsEmail, IsString, MinLength, MaxLength, IsNumber, IsInt, Min, IsOptional, IsNotEmpty } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { z } from "zod";
+import { createZodDto } from "nestjs-zod";
 
-export class CreateUserDto {
-  @ApiProperty({ type: String, example: "user@example.com" })
-  @IsNotEmpty({ message: "email must not be empty" })
-  @IsString({ message: "email must be a string" })
-  @IsEmail({}, { message: "email must be a valid email address" })
-  email!: string;
+/**
+ * Zod schema for creating a user.
+ */
+export const createUserSchema = z.object({
+  email: z.email("email must be a valid email address").min(1, "email must not be empty"),
+  name: z.string().min(1, "name must be at least 1 character").max(255, "name must not exceed 255 characters"),
+  age: z
+    .number()
+    .int("age must be an integer")
+    .min(0, "age must be at least 0")
+    .max(125, "age must not exceed 125")
+    .nullable()
+    .optional(),
+});
 
-  @ApiProperty({ type: String, example: "John Doe" })
-  @IsNotEmpty({ message: "name must not be empty" })
-  @IsString({ message: "name must be a string" })
-  @MinLength(1, { message: "name must be at least 1 character" })
-  @MaxLength(255, { message: "name must not exceed 255 characters" })
-  name!: string;
-
-  @ApiProperty({ type: Number, example: 30, nullable: true, required: false })
-  @IsOptional()
-  @IsNumber({}, { message: "age must be a number" })
-  @IsInt({ message: "age must be an integer" })
-  @Min(0, { message: "age must be at least 0" })
-  age?: number | null;
-}
+/**
+ * DTO class generated from Zod schema.
+ * Provides validation and Swagger documentation.
+ */
+export class CreateUserDto extends createZodDto(createUserSchema) {}

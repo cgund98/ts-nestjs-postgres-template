@@ -1,22 +1,17 @@
-import { IsNumber, IsInt, Min, Max, IsOptional } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { z } from "zod";
+import { createZodDto } from "nestjs-zod";
 
-export class ListUsersQueryDto {
-  @ApiProperty({ type: Number, example: 1, required: false, default: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @IsInt()
-  @Min(1)
-  page?: number;
+/**
+ * Zod schema for listing users query parameters.
+ * Uses coerce to convert string query params to numbers.
+ */
+export const listUsersQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1).optional(),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20).optional(),
+});
 
-  @ApiProperty({ type: Number, example: 20, required: false, default: 20 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  pageSize?: number;
-}
+/**
+ * DTO class generated from Zod schema.
+ * Provides validation and Swagger documentation.
+ */
+export class ListUsersQueryDto extends createZodDto(listUsersQuerySchema) {}

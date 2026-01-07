@@ -1,58 +1,32 @@
-import {
-  IsEmail,
-  IsString,
-  MinLength,
-  MaxLength,
-  IsNumber,
-  IsInt,
-  Min,
-  ValidateIf,
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
-} from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { z } from "zod";
+import { createZodDto } from "nestjs-zod";
 
-// Custom validator to ensure value is actually a string type
-function IsStringType(validationOptions?: ValidationOptions) {
-  return function (object: object, propertyName: string) {
-    registerDecorator({
-      name: "isStringType",
-      target: object.constructor,
-      propertyName: propertyName,
-      options: validationOptions ?? {},
-      validator: {
-        validate(value: any) {
-          return typeof value === "string";
-        },
-        defaultMessage(args: ValidationArguments) {
-          return `${args.property} must be a string`;
-        },
-      },
-    });
-  };
-}
+/**
+ * Zod schema for patching a user.
+ * All fields are optional, but at least one must be provided.
+ */
+export const patchUserSchema = z
+  .object({
+    email: z.email("email must be a valid email address").optional(),
+    name: z
+      .string()
+      .min(1, "name must be at least 1 character")
+      .max(255, "name must not exceed 255 characters")
+      .optional(),
+    age: z
+      .number()
+      .int("age must be an integer")
+      .min(0, "age must be at least 0")
+      .max(125, "age must not exceed 125")
+      .nullable()
+      .optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided",
+  });
 
-export class PatchUserDto {
-  @ApiProperty({ type: String, example: "user@example.com", required: false })
-  @ValidateIf((o) => o.email !== undefined)
-  @IsStringType({ message: "email must be a string" })
-  @IsString({ message: "email must be a string" })
-  @IsEmail({}, { message: "email must be a valid email address" })
-  email?: string;
-
-  @ApiProperty({ type: String, example: "John Doe", required: false })
-  @ValidateIf((o) => o.name !== undefined)
-  @IsStringType({ message: "name must be a string" })
-  @IsString({ message: "name must be a string" })
-  @MinLength(1, { message: "name must be at least 1 character" })
-  @MaxLength(255, { message: "name must not exceed 255 characters" })
-  name?: string;
-
-  @ApiProperty({ type: Number, example: 30, nullable: true, required: false })
-  @ValidateIf((o) => o.age !== undefined)
-  @IsNumber({}, { message: "age must be a number" })
-  @IsInt({ message: "age must be an integer" })
-  @Min(0, { message: "age must be at least 0" })
-  age?: number | null;
-}
+/**
+ * DTO class generated from Zod schema.
+ * Provides validation and Swagger documentation.
+ */
+export class PatchUserDto extends createZodDto(patchUserSchema) {}

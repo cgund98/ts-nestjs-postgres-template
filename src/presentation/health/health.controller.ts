@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import type { Settings } from "@/config/settings";
-import { SETTINGS_TOKEN } from "@/infrastructure/di/tokens";
+import { SETTINGS_TOKEN } from "@/config/settings.module";
 
 @ApiTags("health")
 @Controller()

@@ -113,6 +113,7 @@ export default tseslint.config(
 
       "no-console": "error",
       "no-debugger": "error",
+      "@typescript-eslint/no-extraneous-class": "off",
 
       "@typescript-eslint/no-unused-vars": [
         "error",

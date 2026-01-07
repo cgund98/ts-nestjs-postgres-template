@@ -4,7 +4,8 @@ import type { Settings } from "@/config/settings";
 import { KyselyDatabasePool } from "@/infrastructure/db/kysely/index";
 import type { TransactionManager } from "@/infrastructure/db/transaction-manager";
 import type { KyselyContext } from "@/infrastructure/db/kysely/context";
-import { SETTINGS_TOKEN, TRANSACTION_MANAGER_TOKEN } from "@/infrastructure/di/tokens";
+import { SETTINGS_TOKEN } from "@/config/settings.module";
+import { TRANSACTION_MANAGER_TOKEN } from "@/infrastructure/di/tokens";
 
 /**
  * Database module providing Kysely database pool and transaction manager.

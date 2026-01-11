@@ -91,7 +91,6 @@ export class UserController {
   @ApiResponse({ status: 200, type: () => UserResponseDto })
   @ApiResponse({ status: 404, description: "User not found" })
   async patchUser(@Param("userId") userId: string, @Body() patchUserDto: PatchUserDto): Promise<UserResponseDto> {
-    console.log("patchUserDto type", typeof patchUserDto);
     const { email, name, age } = patchUserDto;
 
     const user = await this.userService.patchUser({

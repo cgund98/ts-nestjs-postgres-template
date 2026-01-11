@@ -1,6 +1,8 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { cleanupOpenApiDoc } from "nestjs-zod";
 
 import { AppModule } from "@/presentation/app.module";
 import { DomainExceptionFilter } from "@/presentation/exceptions/domain-exception.filter";
@@ -12,7 +14,9 @@ const settings = getSettings();
 const logger = getLogger("API");
 
 async function bootstrap(): Promise<void> {
-  const paramTypes = Reflect.getMetadata("design:paramtypes", UserController.prototype, "patchUser");
+  const paramTypes = Reflect.getMetadata("design:paramtypes", UserController.prototype, "patchUser") as
+    | unknown[]
+    | undefined;
   if (paramTypes === undefined) {
     throw new Error("Unable to infer param types for UserController.patchUser. Make sure you aren't running with tsx");
   }
@@ -20,7 +24,7 @@ async function bootstrap(): Promise<void> {
   try {
     logger.info({ environment: settings.ENVIRONMENT, msg: "Starting API server" });
 
-    const app = await NestFactory.create(AppModule, {
+    const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
       logger: settings.LOG_LEVEL === "debug" ? ["debug", "log", "warn", "error"] : ["log", "warn", "error"],
     });
 
@@ -39,7 +43,7 @@ async function bootstrap(): Promise<void> {
     const document = SwaggerModule.createDocument(app, config, {
       extraModels: [],
     });
-    SwaggerModule.setup("docs", app, document);
+    SwaggerModule.setup("docs", app, cleanupOpenApiDoc(document));
 
     const port = process.env.PORT ? Number(process.env.PORT) : 8000;
     const host = process.env.HOST ?? "0.0.0.0";

@@ -1,19 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { UserResponseDto } from "./user-response.dto";
+import { createPaginatedResponseSchema } from "@/presentation/pagination";
+import { createZodDto } from "nestjs-zod";
+import { userResponseSchema } from "./user-response.dto";
 
-export class PaginatedUserResponseDto {
-  @ApiProperty({ type: () => [UserResponseDto], isArray: true })
-  items!: UserResponseDto[];
+const listUsersResponseSchema = createPaginatedResponseSchema(userResponseSchema);
 
-  @ApiProperty({ type: Number, example: 1 })
-  page!: number;
-
-  @ApiProperty({ type: Number, example: 20 })
-  pageSize!: number;
-
-  @ApiProperty({ type: Number, example: 100 })
-  total!: number;
-
-  @ApiProperty({ type: Number, example: 5 })
-  totalPages!: number;
-}
+export class PaginatedUserResponseDto extends createZodDto(listUsersResponseSchema) {}

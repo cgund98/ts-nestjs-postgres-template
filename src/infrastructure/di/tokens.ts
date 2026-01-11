@@ -4,8 +4,6 @@
  * and prevents typos when injecting dependencies.
  */
 
-export const SETTINGS_TOKEN = "SETTINGS";
-
 export const TRANSACTION_MANAGER_TOKEN = "TRANSACTION_MANAGER";
 
 export const EVENT_PUBLISHER_TOKEN = "EVENT_PUBLISHER";
